@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ATB</title>
+        <style>
+            :root{
+                --mainreng : #6F0BBB
+            }
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #container{
+                width: 90%;
+                margin: auto;
+                display: flex;
+                gap: 20px;
+            }
+            .left{background-color: #f2f2f2; padding: 40px; border-radius: 10px; width: 70%;}
+            .top, .bottom{display: flex; flex-direction: column; padding: 10px;}
+            #inpvalue{ border: 1px solid var(--mainreng); border-radius: 10px; padding: 20px; display: flex; justify-content: space-between;}
+            #inp1, #inp2{height: 0px;}
+            input[type="range"] {
+                width: 100%;
+                appearance: none;
+                height: 6px;
+                background: #d1d5db;
+                border-radius: 5px;
+                outline: none;
+                transition: 0.2s;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                appearance: none;
+                width: 15px;
+                height: 15px;
+                background: var(--mainreng);
+                border-radius: 50%;
+                cursor: pointer;
+            }
+            .deyerler{display: flex; justify-content: space-between; margin: 10px 0;}
+            .right{display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #000; width: 30%; padding:30px; border-radius: 10px;}
+            .faizodenis{display: flex; gap: 50px; }
+            .btn{background-color: var(--mainreng); color: #fff; padding: 20px 10px; border: none;  border-radius: 10px;}
+            .btns{ width: 25%; margin: auto; display: flex; padding: 20px; border-radius: 10px;}
+            #a1{padding: 10px; transition: .5s; border-radius: 10px 0 0 10px;}
+            #a2{padding: 10px; transition: .5s; border-radius: 0 10px 10px 0;}
+            sub{color: #888;}
+            .faizodenis p {font-size: .8rem; font-weight: 100 !important; color: #888;}
+            .faizodenis h3{ font-size: 2rem;}
+
+        </style>
+    </head>
+    <body>
+        <div class="btns">
+            <div id="a1" onclick="change(true)">Nağd krediti <br> hesabla</div>
+            <div id="a2" onclick="change(false)">əmanət üzrə gəliri <br> hesabla</div>
+        </div>
+        <div id="container">
+            <div class="content">
+                <div class="left">
+                    <div class="top">
+                        <div id="inpvalue">
+                            <div class="text">hansı məbləğ arzunuzu reallaşdırar?</div>
+                            <div id="amountDisplay">5000 AZN</div>
+                        </div>
+                        <input id="inp1" value="5000" oninput="calc()" min="300" max="40000" step="100" type="range">
+                        <div class="deyerler">
+                            <sub>300</sub> <sub>40000</sub>
+                        </div>
+                    </div>
+                    <div class="bottom">
+                        <div id="inpvalue">
+                            <div class="text">müddəti seçin</div>
+                            <div id="monthDisplay">12 ay</div>
+                        </div>
+                        <input id="inp2" value="12" oninput="calc()" min="3" max="48" type="range">
+                        <div class="deyerler">
+                            <sub>3 ay</sub> <sub>48 ay</sub>
+                        </div>
+                    </div>
+                </div>
+                <div class="right">
+                    <h2>bizim <br> təklif</h2>
+                    <div class="faizodenis">
+                        <div class="faiz">
+                            <p>Faiz dərəcəsi</p>
+                            <h3 id="faizRate">11%</h3>
+                        </div>
+                        <div class="odenis">
+                            <p>Aylıq ödəniş</p>
+                            <h3 id="monthlyPayment">0Azn</h3>
+                        </div>
+                    </div>
+                    <button class="btn">sifariş</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            function calc(){
+                const inp1 = document.getElementById('inp1')
+                const inp2 = document.getElementById('inp2')
+                const amountDisplay = document.getElementById('amountDisplay')
+                const monthDisplay = document.getElementById('monthDisplay')
+                const faizRate = document.getElementById('faizRate')
+                const monthlyPayment = document.getElementById('monthlyPayment')
+
+                let amaount = +inp1.value
+                let months = +inp2.value
+                let faiz
+
+                if(months <= 12){
+                    faiz = 11
+                } else if(months <= 24){
+                    faiz = 14.5
+                } else if(months <= 36){
+                    faiz = 15.5
+                }else{ faiz = 16.5 }
+
+                let total = amaount + (amaount * faiz / 100)
+                let monthlyPay = (total / months).toFixed(0)
+                let years = Math.floor(months / 12)
+                let qaliqAy = months % 12
+                let formatlasmisVaxt = years > 0 ? `${years} il` : ''
+                formatlasmisVaxt += qaliqAy > 0 ? `${qaliqAy} ay` : ''
+                if(formatlasmisVaxt === '') formatlasmisVaxt = '0 ay'
+
+                amountDisplay.innerHTML = `${amaount}`
+                monthDisplay.innerHTML = `${months}`
+                faizRate.innerHTML= `${faiz} %`
+                monthlyPayment.innerHTML = `${monthlyPay}`
+            }
+            calc()
+            const a1 = document.getElementById('a1')
+            const a2 = document.getElementById('a2')
+            const container = document.getElementById('container')
+            let flag = false
+            function change(status = true){
+                a1.style.background = status ? '#6F0BBB' : '#f2f2f2'
+                a2.style.background = !status ? '#6F0BBB' : '#f2f2f2'
+
+                a1.style.color = status ? '#fff' : '#000'
+                a2.style.color = !status ? '#fff' : '#000'
+
+                container.innerHTML = status ? 
+                    `<div id="container">
+                        <div class="left">
+                            <div class="top">
+                                <div id="inpvalue">
+                                    <div class="text">hansı məbləğ arzunuzu reallaşdırar?</div>
+                                    <div id="amountDisplay">5000 AZN</div>
+                                </div>
+                                <input id="inp1" value="5000" oninput="calc()" min="300" max="40000" step="100" type="range">
+                                <div class="deyerler">
+                                    <sub>300</sub> <sub>40000</sub>
+                                </div>
+                            </div>
+                            <div class="bottom">
+                                <div id="inpvalue">
+                                    <div class="text">müddəti seçin</div>
+                                    <div id="monthDisplay">12 ay</div>
+                                </div>
+                                <input id="inp2" value="12" oninput="calc()" min="3" max="48" type="range">
+                                <div class="deyerler">
+                                    <sub>3 ay</sub> <sub>48 ay</sub>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="right">
+                            <h2>bizim <br> təklif</h2>
+                            <div class="faizodenis">
+                                <div class="faiz">
+                                    <p>Faiz dərəcəsi</p>
+                                    <h3 id="faizRate">11%</h3>
+                                </div>
+                                <div class="odenis">
+                                    <p>Aylıq ödəniş</p>
+                                    <h3 id="monthlyPayment">0Azn</h3>
+                                </div>
+                            </div>
+                            <button class="btn">sifariş</button>
+                        </div>
+                    </div>` : 'Hələ əlavə edilməyib'
+            }
+            change()
+        </script>
+    </body>
+</html>
